@@ -27,9 +27,16 @@ app.use(cookieParser());
 
 // Defining routes
 const userRoutes = require("./routes/userRoutes");
+const chatbotRoutes = require("./routes/chatbotRoute");
+const sessionRoutes = require("./routes/sessionRoute");
+const messageRoutes = require("./routes/messageRoute");
 
 // Routes
 app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/chatbot", chatbotRoutes);
+app.use("/api/v1/session", sessionRoutes);
+app.use("/api/v1/message", messageRoutes);
+
 
 // Root route
 app.get("/", (req, res) => {
