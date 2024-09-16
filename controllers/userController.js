@@ -189,9 +189,9 @@ exports.deleteBussinessDetails=catchAsyncError(async(req,res,next)=>{
 exports.generateNewToken=catchAsyncError(async(req,res,next)=>{
   const user=req.user;
 
-  const token=await User.generateToken();
+  const token=await generateToken();
 
-  user.token=token;
+  user.chatbot_token=token;
 
   await user.save();
 
