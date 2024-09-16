@@ -30,10 +30,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    credits: {
-        type: Number,
-        default: 100,
-    },
     bussinessName: {
         type: String,
         required: true,

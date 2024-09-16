@@ -76,12 +76,7 @@ exports.getResponse = catchAsyncError(async (req, res, next) => {
 
   const owner = await User.findById(chatbot_id);
 
-  if (owner.credits < 1) {
-    return res.status(400).json({
-      success: false,
-      message: "You don't have enough credits",
-    });
-  }
+
 
   const bussinessDetails = owner.bussinessDetails;
 
@@ -150,11 +145,7 @@ const chatModel = genai.getGenerativeModel({
     await session.save();
 
 
-    // Deduct credits from the owner
-
-    owner.credits=owner.credits-1;
-    
-    await owner.save();
+  
 
 
   res.status(200).json({
