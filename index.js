@@ -10,6 +10,8 @@ const fs = require('fs');
 const path = require('path');
 const app = express();
 
+const ErrorHandler=require("./middleware/error")
+
 const PORT = 3000;
 
 require("dotenv").config({ path: "./config/.env" });
@@ -42,6 +44,7 @@ const userRoutes = require("./routes/userRoutes");
 const chatbotRoutes = require("./routes/chatbotRoute");
 const sessionRoutes = require("./routes/sessionRoute");
 const messageRoutes = require("./routes/messageRoute");
+const CustomError = require("./utils/errorHandler");
 
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/chatbot", chatbotRoutes);
@@ -49,11 +52,12 @@ app.use("/api/v1/session", sessionRoutes);
 app.use("/api/v1/message", messageRoutes);
 
 
-
+app.use(ErrorHandler)
 
 
 
 app.get("/health", (req, res) => {
+  throw (new CustomError("asdasd",201))
   res.status(200).json({ status: "ok", message: "Server is healthy!" });
 });
 
