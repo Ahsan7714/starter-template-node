@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 const {
     createSession,
-    getAllSessions
+    getAllSessions,
+    getMonthlySessions
 } = require("../controllers/sessionController");
 
 const { isAuthenticatedUser } = require("../middleware/Auth");
@@ -26,7 +27,11 @@ router.route("/create").post(createSession);
 router.route("/owner").get(isAuthenticatedUser,getAllSessions);
 
 
+// GET -> get All number of sessions in a month for  all  months
+// URL -> /api/v1/session/monthly
+// Description -> Get all sessions of a chatbot by chatbot owner from dashboard
 
-
+router.route("/monthly").get(isAuthenticatedUser,getMonthlySessions);
+ 
 module.exports = router;
 

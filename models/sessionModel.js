@@ -10,7 +10,6 @@ const sessionSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique: true,
     },
     chatbotId: {
         type: mongoose.Schema.Types.ObjectId,
