@@ -6,6 +6,7 @@ const rateLimit = require("express-rate-limit");
 const morgan = require("morgan");
 const compression = require('compression');
 const app = express();
+const ErrorHandler = require("./middleware/error");
 
 const PORT = process.env.PORT || 3000;
 
@@ -20,6 +21,8 @@ app.use(
     credentials: true,
   })
 );
+
+
 
 app.use(morgan("dev"));
 app.use(compression());
@@ -60,6 +63,9 @@ app.use((req, res, next) => {
     message: "Page not found",
   });
 });
+
+
+app.use(ErrorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
