@@ -2,6 +2,7 @@ const User = require("../models/userModel");
 const catchAsyncError = require("../middleware/catchAsyncError");
 const sendToken = require("../utils/jwtToken");
 const { generateToken } = require("../utils/chatbotToken");
+const Session = require("../models/sessionModel");
 
 require("dotenv").config();
 
@@ -17,25 +18,18 @@ exports.registerUser = catchAsyncError(async (req, res, next) => {
     bussinessCategory,
   } = req.body;
 
-  const userExists=await User.findOne({email});
+  const userExists = await User.findOne({ email });
 
-
-  if(userExists){
+  if (userExists) {
     return res.status(400).json({
-      success:false,
-      message:"User already exists"
+      success: false,
+      message: "User already exists",
     });
   }
 
-
-
   // token for user to access the chatbot and other services
 
-  const chatbot_token= await generateToken();
-
-
-
-
+  const chatbot_token = await generateToken();
 
   // Create a new user
   const user = await User.create({
@@ -66,9 +60,6 @@ exports.loginUser = catchAsyncError(async (req, res, next) => {
 
   // finding user in database
   const user = await User.findOne({ email }).select("+password");
-
-
-
 
   if (!user) {
     return res.status(401).json({
@@ -127,17 +118,14 @@ exports.loadUserProfile = catchAsyncError(async (req, res, next) => {
   });
 });
 
-
-
 // add business details
 exports.addBussinessDetails = catchAsyncError(async (req, res, next) => {
   const { question, answer } = req.body;
 
-  const user=req.user;  
+  const user = req.user;
   const bussinessDetails = user.bussinessDetails;
 
   if (!question || !answer) {
-
     return res.status(400).json({
       success: false,
       message: "Please enter all fields",
@@ -161,42 +149,95 @@ exports.addBussinessDetails = catchAsyncError(async (req, res, next) => {
   });
 });
 
+exports.deleteBussinessDetails = catchAsyncError(async (req, res, next) => {
+  const user = req.user;
+  const { id } = req.params;
 
-exports.deleteBussinessDetails=catchAsyncError(async(req,res,next)=>{
-  const user=req.user;
-  const {id}=req.params;
+  const bussinessDetails = user.bussinessDetails;
 
-  const bussinessDetails=user.bussinessDetails;
+  const index = bussinessDetails.findIndex(
+    (bussinessDetail) => bussinessDetail._id === id
+  );
 
-  const index=bussinessDetails.findIndex((bussinessDetail)=>bussinessDetail._id===id);
-
-  if(index>-1){
-    bussinessDetails.splice(index,1);
+  if (index > -1) {
+    bussinessDetails.splice(index, 1);
   }
 
   await user.save();
 
   res.status(200).json({
-    success:true,
-    message:"Bussiness details deleted successfully"
+    success: true,
+    message: "Bussiness details deleted successfully",
   });
-
 });
-
 
 // Generate  new token for chatbot and replace the old token
 
-exports.generateNewToken=catchAsyncError(async(req,res,next)=>{
-  const user=req.user;
+exports.generateNewToken = catchAsyncError(async (req, res, next) => {
+  const user = req.user;
 
-  const token=await generateToken();
+  const token = await generateToken();
 
-  user.chatbot_token=token;
+  user.chatbot_token = token;
 
   await user.save();
 
   res.status(200).json({
-    success:true,
-    message:"New token generated successfully"
+    success: true,
+    message: "New token generated successfully",
   });
-})
+});
+
+exports.getAllUsers = catchAsyncError(async (req, res, next) => {
+  const users = await User.find({ role: "user" });
+
+  res.status(200).json({
+    success: true,
+    users,
+  });
+});
+
+exports.getUsersMonthly = catchAsyncError(async (req, res, next) => {
+  const users = await User.aggregate([
+    {
+      $match: { role: "user" },
+    },
+    {
+      $project: {
+        month: { $month: "$createdAt" },
+      },
+    },
+    {
+      $group: {
+        _id: "$month",
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+  const data = [
+    { month: "January", count: 0 },
+    { month: "February", count: 0 },
+    { month: "March", count: 0 },
+    { month: "April", count: 0 },
+    { month: "May", count: 0 },
+    { month: "June", count: 0 },
+    { month: "July", count: 0 },
+    { month: "August", count: 0 },
+    { month: "September", count: 0 },
+    { month: "October", count: 0 },
+    { month: "November", count: 0 },
+    { month: "December", count: 0 },
+  ];
+
+  users.forEach((user) => {
+    const monthIndex = user._id - 1;
+    data[monthIndex].count = user.count;
+  });
+
+  res.status(200).json({
+    success: true,
+    data,
+  });
+});
+
+

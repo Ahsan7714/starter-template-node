@@ -77,9 +77,6 @@ exports.getMonthlySessions = catchAsyncError(async (req, res, next) => {
                 _id: "$month",
                 count: { $sum: 1 }
             }
-        },
-        {
-            $sort: { _id: 1 }
         }
     ]);
 
@@ -110,3 +107,50 @@ exports.getMonthlySessions = catchAsyncError(async (req, res, next) => {
 });
 
 
+
+
+
+// ADMIN ROUTES
+
+exports.getAllSessionsMonthlyByAdmin=catchAsyncError(async(req,res,next)=>{
+    const sessions=await Session.aggregate([
+        {
+            $project:{
+                month:{$month:"$createdAt"}
+            }
+        },
+        {
+            $group:{
+                _id:"$month",
+                count:{$sum:1}
+            }
+        }
+    ]);
+  
+    const data=[
+        {month:"January",count:0},
+        {month:"February",count:0},
+        {month:"March",count:0},
+        {month:"April",count:0},
+        {month:"May",count:0},
+        {month:"June",count:0},
+        {month:"July",count:0},
+        {month:"August",count:0},
+        {month:"September",count:0},
+        {month:"October",count:0},
+        {month:"November",count:0},
+        {month:"December",count:0}
+    ];
+  
+    sessions.forEach(session=>{
+        const monthIndex=session._id-1;
+        data[monthIndex].count=session.count;
+    });
+  
+    res.status(200).json({
+        success:true,
+        data
+    });
+  });
+  
+  
