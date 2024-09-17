@@ -57,7 +57,6 @@ app.use(ErrorHandler)
 
 
 app.get("/health", (req, res) => {
-  throw (new CustomError("asdasd",201))
   res.status(200).json({ status: "ok", message: "Server is healthy!" });
 });
 
