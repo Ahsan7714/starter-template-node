@@ -4,10 +4,19 @@ const {
     createSession,
     getAllSessions,
     getMonthlySessions,
-    getAllSessionsMonthlyByAdmin
+    getAllSessionsMonthlyByAdmin,
+    addMessageToSession
 } = require("../controllers/sessionController");
 
 const { isAuthenticatedUser } = require("../middleware/Auth");
+
+// POST -> Add messages to a session
+// URL -> /api/v1/session/addMessage
+// Description -> Add messages to a session by guest
+
+router.route("/addMessages").post(addMessageToSession);
+
+
 
 // POST -> create a session
 // URL -> /api/v1/session/create

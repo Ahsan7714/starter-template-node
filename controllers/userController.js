@@ -3,6 +3,7 @@ const catchAsyncError = require("../middleware/catchAsyncError");
 const sendToken = require("../utils/jwtToken");
 const { generateToken } = require("../utils/chatbotToken");
 const Session = require("../models/sessionModel");
+const CustomError = require("../utils/errorHandler");
 
 require("dotenv").config();
 
@@ -171,6 +172,37 @@ exports.deleteBussinessDetails = catchAsyncError(async (req, res, next) => {
   });
 });
 
+// Return the users details  by finding through the chatbot_token
+
+exports.findChatbotUsingToken = catchAsyncError(async (req, res) => {
+  const { token } = req.query;
+
+  const user =await User.findOne({ chatbot_token:token });
+
+  if (!user) {
+    throw new CustomError("Invalid Token", 400);
+  }
+
+  const {
+    bussinessName,
+    bussinessCategory,
+    bussinessDescription,
+    bussinessDetails,
+    _id
+  } = user;
+
+  res.status(200).json({
+    data:{
+      bussinessName,
+      bussinessCategory,
+      bussinessDescription,
+      bussinessDetails,
+      id:_id
+    },
+    message:"Chatbot Details"
+  })
+});
+
 // Generate  new token for chatbot and replace the old token
 
 exports.generateNewToken = catchAsyncError(async (req, res, next) => {
@@ -239,5 +271,3 @@ exports.getUsersMonthly = catchAsyncError(async (req, res, next) => {
     data,
   });
 });
-
-
