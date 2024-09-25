@@ -51,7 +51,26 @@ exports.createSession = catchAsyncError(async (req, res, next) => {
 exports.getAllSessions = catchAsyncError(async (req, res, next) => {
     const user=req.user;
 
-    const sessions = await Session.find({ chatbotId: user._id });
+    let sessions = await Session.find({ chatbotId: user._id });
+
+
+    // get last message 
+    sessions = await Promise.all(sessions.map(async session => {
+        const lastMessage = await Message.findOne({ sessionId: session._id,role:"user" }).sort({ createdAt: -1 });
+
+        return {
+            ...session._doc,
+            lastMessage: lastMessage ? lastMessage.message : ""
+        };
+
+    }));
+
+
+
+  
+
+
+
 
     res.status(200).json({
         success: true,
