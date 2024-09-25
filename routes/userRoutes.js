@@ -10,7 +10,8 @@ const {
   generateNewToken,
   getAllUsers,
   getUsersMonthly,
-  findChatbotUsingToken
+  findChatbotUsingToken,
+  contactUs
 } = require("../controllers/userController");
 
 const { isAuthenticatedUser } = require("../middleware/Auth");
@@ -29,6 +30,9 @@ router.route("/token/verify").get(findChatbotUsingToken)
 router
   .route("/me")
   .get(isAuthenticatedUser, loadUserProfile);
+
+  // contact us route
+  router.route("/contact").post(contactUs);
 
   // [ADMIN]
 

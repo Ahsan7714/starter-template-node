@@ -4,7 +4,7 @@ const sendToken = require("../utils/jwtToken");
 const { generateToken } = require("../utils/chatbotToken");
 const Session = require("../models/sessionModel");
 const CustomError = require("../utils/errorHandler");
-
+const { sendEmail } = require("../utils/sendMail");
 require("dotenv").config();
 
 // register a user
@@ -122,7 +122,7 @@ exports.loadUserProfile = catchAsyncError(async (req, res, next) => {
 // add business details
 exports.addBussinessDetails = catchAsyncError(async (req, res, next) => {
   const { question, answer } = req.body;
-
+console.log(req.body)
   const user = req.user;
   const bussinessDetails = user.bussinessDetails;
 
@@ -270,4 +270,60 @@ exports.getUsersMonthly = catchAsyncError(async (req, res, next) => {
     success: true,
     data,
   });
+});
+
+// contact form
+exports.contactUs = catchAsyncError(async (req, res, next) => {
+  const { name, email, message,subject } = req.body;
+
+  if (!name || !email || !message) {
+    return res.status(400).json({
+      success: false,
+      message: "Please enter all fields",
+    });
+  }
+
+  const html = `
+  <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ccc; border-radius: 10px; background-color: #f9f9f9;">
+      <h1 style="color: #8429d6; text-align: center; margin-bottom: 20px; font-size: 36px;">Quickstart-AI</h1>
+      <h2 style="color: #333; text-align: center; margin-bottom: 20px; font-size: 24px;">New Contact Us Message</h2>
+      <div style="margin-bottom: 10px;">
+          <p style="font-weight: bold;">Name:</p>
+          <p style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; background-color: #fff;">${name}</p>
+      </div>
+      <div style="margin-bottom: 10px;">
+          <p style="font-weight: bold;">Email:</p>
+          <p style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; background-color: #fff;">${email}</p>
+      </div>
+      <div style="margin-bottom: 10px;">
+          <p style="font-weight: bold;">Subject:</p>
+          <p style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; background-color: #fff;">${subject}</p>
+      </div>
+      <div style="margin-bottom: 10px;">
+          <p style="font-weight: bold;">Message:</p>
+          <p style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; background-color: #fff;">${message}</p>
+      </div>
+  </div>
+`;
+
+
+  try {
+    // The user's email is used as the 'from' address
+    await sendEmail({
+      from: email, // The user's email address
+      subject: "Contact Us",
+      html,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Email sent successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Email not sent",
+    });
+  }
 });

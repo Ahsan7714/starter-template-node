@@ -8,7 +8,7 @@ const compression = require('compression');
 const app = express();
 const ErrorHandler = require("./middleware/error");
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3100;
 
 require("dotenv").config({ path: "./config/.env" });
 
@@ -16,7 +16,7 @@ connectDB();
 
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:3000"],
     methods: ["POST", "GET", "PUT", "DELETE"],
     credentials: true,
   })
