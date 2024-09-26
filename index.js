@@ -8,6 +8,7 @@ const compression = require('compression');
 const app = express();
 const ErrorHandler = require("./middleware/error");
 
+
 const PORT = process.env.PORT || 3100;
 
 require("dotenv").config({ path: "./config/.env" });
