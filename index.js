@@ -16,7 +16,7 @@ connectDB();
 
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3000","https://quickstart-ai.me"],
     methods: ["POST", "GET", "PUT", "DELETE"],
     credentials: true,
   })
