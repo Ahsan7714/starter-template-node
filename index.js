@@ -17,9 +17,10 @@ connectDB();
 
 app.use(
   cors({
-    origin: ["http://localhost:3000","https://quickstart-ai.me"],
-    methods: ["POST", "GET", "PUT", "DELETE"],
-    credentials: true,
+    origin: '*', // Allow all origins
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allow specific HTTP methods
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
   })
 );
 
