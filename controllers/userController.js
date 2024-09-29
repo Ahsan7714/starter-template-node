@@ -323,7 +323,7 @@ exports.contactUs = catchAsyncError(async (req, res, next) => {
     console.log(error);
     res.status(500).json({
       success: false,
-      message: "Email not sent",
+      message: error.message,
     });
   }
 });
