@@ -19,6 +19,7 @@ app.use(
   cors({
     origin: 'https://www.quickstart-ai.me', // Allow all origins
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allow specific HTTP methods
+    credentials: true, // Allow cookies
   })
 );
 
